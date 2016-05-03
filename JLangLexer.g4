@@ -1,24 +1,46 @@
 lexer grammar JLangLexer;
 
 RAW
-    : RAW_CHAR+
+    : (RAW_CHAR)+
     ;
 
-RAW_CHAR
-    : ~[@]
-    | '\\@'
+RAW_CHAR 
+    : ~[<\r\n]
+    | '\r'? '\n'
+    | '<' ~[?%]
     ;
 
-BEGIN_SCRIPT_BLOCK
-    : '@{' -> pushMode(SCRIPT)
+//NL 
+//    : '\r'? '\n'
+//    ;
+
+OPEN_ECHOSCRIPT_BLOCK
+    : '<?' -> pushMode(SCRIPT)
+    ;
+
+
+OPEN_SCRIPT_BLOCK
+    : '<%' -> pushMode(SCRIPT)
     ;
 
 // ------------------------------------------------------------------
 
 mode SCRIPT;
 
-END_SCRIPT_BLOCK
-    : '}' -> popMode
+CLOSE_ECHOSCRIPT_BLOCK
+    : '?>' -> popMode
+    ;
+
+CLOSE_SCRIPT_BLOCK
+    : '%>' ('\r'? '\n')? -> popMode
+    ;
+
+CLOSE_BRACE
+    : '}' 
+    ;
+
+OPEN_BRACE
+    : '{' 
     ;
 
 IDENTIFIER
@@ -93,8 +115,6 @@ AND_ASGN:                 '&=';
 OR_ASGN:                  '|=';
 XOR_ASGN:                 '^=';
 
-
-
 POW:                      'pow';
 
 EXCLAMATION:              '!';
@@ -103,7 +123,6 @@ COLON:                    ':';
 SEMICOLON:                ';';
 COMMA:                    ',';
 
-
 LPAREN:                   '(';
 RPAREN:                   ')';
 
@@ -111,6 +130,8 @@ TRUE:                     'true';
 FALSE:                    'false';
 
 // ------------------------------------------------------------------
+        
+      
 WS
-    : [ \t\r\n]+ -> skip
+    : [ \r\n\t]+ -> skip
     ;

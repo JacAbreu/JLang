@@ -11,12 +11,9 @@ elements
     ;
 
 element
-    : raw
-    | BEGIN_SCRIPT_BLOCK script END_SCRIPT_BLOCK
-    ;
-
-raw
-    : RAW
+    : OPEN_ECHOSCRIPT_BLOCK script CLOSE_ECHOSCRIPT_BLOCK
+    | OPEN_SCRIPT_BLOCK script CLOSE_SCRIPT_BLOCK
+    | RAW
     ;
 
 script
@@ -24,9 +21,15 @@ script
     ;
 
 script_element
-    : expression                                
+    : expression
     | assign                                    
+    | code_block 
     ;
+
+code_block
+    : OPEN_BRACE script CLOSE_BRACE
+    ;
+              
 
 expression
     : op=(PLUS|MINUS) expression                      # Unary
@@ -34,7 +37,7 @@ expression
     | POW LPAREN expression COMMA expression RPAREN   # Expo
     | expression op=(STAR|DIV|MOD) expression         # Multiplicative
     | expression op=(PLUS|MINUS) expression           # Additive
-    | expression op=(SHIFTL|SHIFTR) expression        # Shit
+    | expression op=(SHIFTL|SHIFTR) expression        # Shift
     | expression op=('<=' | '<' | '>=' | '>')         # Relational
     | expression op=('==' | '!=') expression          # Equality
     | expression LOGICAL_AND expression               # LogicalAnd
