@@ -11,10 +11,24 @@ elements
     ;
 
 element
-    : OPEN_ECHOSCRIPT_BLOCK statement_list CLOSE_ECHOSCRIPT_BLOCK
-    | OPEN_SCRIPT_BLOCK statement_list CLOSE_SCRIPT_BLOCK
+    : echo_script
+    | plain_script 
+    | fragmented_script
     | RAW
     ;
+
+echo_script 
+    : OPEN_ECHOSCRIPT_BLOCK statement_list CLOSE_ECHOSCRIPT_BLOCK
+    ;
+
+plain_script
+    : OPEN_SCRIPT_BLOCK statement_list CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK elements OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (statement_list)? CLOSE_SCRIPT_BLOCK
+    ;
+        
 
 statement_list
     : statement (';' statement)*
@@ -91,9 +105,17 @@ simple_embedded_statement
     | FOR LPAREN for_initializer? ';' expression? ';' for_iterator? RPAREN embedded_statement
     | FOREACH LPAREN type IDENTIFIER IN expression RPAREN embedded_statement
     | GOTO IDENTIFIER
-    | BREAK
+    | BREAK 
     | CONTINUE
     ;
+
+fragmented_statement
+    : IF LPAREN expression RPAREN OPEN_BRACE
+    | WHILE LPAREN expression RPAREN OPEN_BRACE
+    | FOR LPAREN for_initializer? ';' expression? ';' for_iterator? RPAREN OPEN_BRACE
+    | FOREACH LPAREN type IDENTIFIER IN expression RPAREN OPEN_BRACE
+    ;
+
 for_initializer
     : local_variable_declaration
     | expression (','  expression)*
