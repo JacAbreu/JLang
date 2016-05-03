@@ -11,46 +11,63 @@ elements
     ;
 
 element
-    : OPEN_ECHOSCRIPT_BLOCK script CLOSE_ECHOSCRIPT_BLOCK
-    | OPEN_SCRIPT_BLOCK script CLOSE_SCRIPT_BLOCK
+    : OPEN_ECHOSCRIPT_BLOCK statement_list CLOSE_ECHOSCRIPT_BLOCK
+    | OPEN_SCRIPT_BLOCK statement_list CLOSE_SCRIPT_BLOCK
     | RAW
     ;
 
-script
-    : script_element (';' script_element)*
+statement_list
+    : statement (';' statement)*
     ;
 
-script_element
-    : expression
-    | assign                                    
-    | code_block 
+statement
+    : IDENTIFIER ':' statement
+    | embedded_statement
     ;
 
-code_block
-    : OPEN_BRACE script CLOSE_BRACE
+embedded_statement
+    : block_statement
+    | simple_embedded_statement
     ;
-              
+
+block_statement
+    : OPEN_BRACE statement_list? CLOSE_BRACE
+    ;
+          
+
+simple_embedded_statement
+    : ';'
+    | expression ';'? 
+    | IF LPAREN expression RPAREN if_body (ELSE if_body)?
+    ;
 
 expression
-    : op=(PLUS|MINUS) expression                      # Unary
-    | EXCLAMATION expression                          # BooleanNot
-    | POW LPAREN expression COMMA expression RPAREN   # Expo
-    | expression op=(STAR|DIV|MOD) expression         # Multiplicative
-    | expression op=(PLUS|MINUS) expression           # Additive
-    | expression op=(SHIFTL|SHIFTR) expression        # Shift
-    | expression op=('<=' | '<' | '>=' | '>')         # Relational
-    | expression op=('==' | '!=') expression          # Equality
-    | expression LOGICAL_AND expression               # LogicalAnd
-    | expression LOGICAL_XOR expression               # LogicalXor
-    | expression LOGICAL_OR expression                # LogicalOr
-    | expression CONDITIONAL_AND expression           # ConditionalAnd
-    | expression CONDITIONAL_OR expression            # ConditionalOr
-    | expression '?' expression ':' expression        # Ternary
-    | INTEGER_LITERAL                                 # Integer
-    | REAL_LITERAL                                    # Double
-    | boolean_literal                                 # Boolean
-    | IDENTIFIER                                      # Identifier
-    | '(' expression ')'                              # Parens
+    : assign                                          # AssignExpression
+    | op=(PLUS|MINUS) expression                      # UnaryExpression
+    | EXCLAMATION expression                          # BooleanNotExpression
+    | POW LPAREN expression COMMA expression RPAREN   # ExpoExpression
+    | expression op=(STAR|DIV|MOD) expression         # MultiplicativeExpression
+    | expression op=(PLUS|MINUS) expression           # AdditiveExpression
+    | expression op=(SHIFTL|SHIFTR) expression        # ShiftExpression
+    | expression op=('<=' | '<' | '>=' | '>') expression         # RelationalExpression
+    | expression op=('==' | '!=') expression          # EqualityExpression
+    | expression LOGICAL_AND expression               # LogicalAndExpression
+    | expression LOGICAL_XOR expression               # LogicalXorExpression
+    | expression LOGICAL_OR expression                # LogicalOrExpression
+    | expression CONDITIONAL_AND expression           # ConditionalAndExpression
+    | expression CONDITIONAL_OR expression            # ConditionalOrExpression
+    | expression '?' expression ':' expression        # TernaryExpression
+    | INTEGER_LITERAL                                 # IntegerExpression
+    | REAL_LITERAL                                    # DoubleExpression
+    | boolean_literal                                 # BooleanExpression
+    | IDENTIFIER                                      # IdentifierExpression
+    | '(' expression ')'                              # ParensExpression
+    ;
+
+
+if_body
+    : block_statement
+    | simple_embedded_statement
     ;
 
 boolean_literal

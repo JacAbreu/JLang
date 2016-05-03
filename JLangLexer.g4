@@ -43,6 +43,10 @@ OPEN_BRACE
     : '{' 
     ;
 
+// ------------------------------------------------------------------
+IF:     'if';
+ELSE:   'else';
+
 IDENTIFIER
     : '@'? IdentifierStartCharacter IdentifierPartCharacter*
     ;
@@ -130,7 +134,6 @@ TRUE:                     'true';
 FALSE:                    'false';
 
 // ------------------------------------------------------------------
-        
       
 WS
     : [ \r\n\t]+ -> skip
