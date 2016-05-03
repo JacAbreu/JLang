@@ -46,7 +46,29 @@ OPEN_BRACE
 // ------------------------------------------------------------------
 IF:     'if';
 ELSE:   'else';
+WHILE:  'while';
+DO:     'do';
+FOR:    'for';
+FOREACH:'foreach';
+IN:     'in';
+GOTO:   'goto';
+BREAK:  'break';
+CONTINUE:'continue';
 
+// ------------------------------------------------------------------
+BOOL: 'bool';
+DECIMAL: 'decimal';
+BYTE: 'byte';
+SHORT: 'short';
+INT: 'int';
+LONG: 'long';
+CHAR: 'char';
+FLOAT: 'float';
+DOUBLE: 'double';
+OBJECT: 'object';
+STRING: 'string';
+
+// ------------------------------------------------------------------
 IDENTIFIER
     : '@'? IdentifierStartCharacter IdentifierPartCharacter*
     ;
@@ -83,11 +105,15 @@ ExponentPart
     : [eE] ('+' | '-')? [0-9]+
     ;
 
+
+
 // ------------------------------------------------------------------
 EXPO:                     '^';
 PLUS:                     '+';
 MINUS:                    '-';
 STAR:                     '*';
+INC:                      '++';
+DEC:                      '--';
 DIV:                      '/';
 
 LOGICAL_AND:              '&';
@@ -126,6 +152,7 @@ QUESTION:                 '?';
 COLON:                    ':';
 SEMICOLON:                ';';
 COMMA:                    ',';
+DOT:                      '.';
 
 LPAREN:                   '(';
 RPAREN:                   ')';

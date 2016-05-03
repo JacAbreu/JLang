@@ -22,6 +22,7 @@ statement_list
 
 statement
     : IDENTIFIER ':' statement
+    | local_variable_declaration
     | embedded_statement
     ;
 
@@ -34,16 +35,78 @@ block_statement
     : OPEN_BRACE statement_list? CLOSE_BRACE
     ;
           
+local_variable_declaration
+    : type local_variable_declarator ( ','  local_variable_declarator)*
+    ;
+
+local_variable_declarator
+    : IDENTIFIER ('=' expression)?
+    ;
+
+type
+    : simple_type
+    | class_type
+    ;
+
+simple_type
+    : numeric_type 
+    | BOOL 
+    ;
+
+numeric_type 
+    : integral_type
+    | floating_point_type
+    | DECIMAL
+    ;
+
+integral_type 
+    : BYTE
+    | SHORT
+    | INT
+    | LONG
+    | CHAR
+    ;
+
+floating_point_type 
+    : FLOAT
+    | DOUBLE
+    ;
+
+class_type 
+    : namespace_or_type_name
+    | OBJECT
+    | STRING
+    ;
+              
+namespace_or_type_name 
+    : (IDENTIFIER) ('.' IDENTIFIER)*
+    ;
 
 simple_embedded_statement
     : ';'
     | expression ';'? 
     | IF LPAREN expression RPAREN if_body (ELSE if_body)?
+    | WHILE LPAREN expression RPAREN embedded_statement
+    | DO embedded_statement WHILE LPAREN expression RPAREN
+    | FOR LPAREN for_initializer? ';' expression? ';' for_iterator? RPAREN embedded_statement
+    | FOREACH LPAREN type IDENTIFIER IN expression RPAREN embedded_statement
+    | GOTO IDENTIFIER
+    | BREAK
+    | CONTINUE
+    ;
+for_initializer
+    : local_variable_declaration
+    | expression (','  expression)*
+    ;
+
+for_iterator
+    : expression (','  expression)*
     ;
 
 expression
     : assign                                          # AssignExpression
-    | op=(PLUS|MINUS) expression                      # UnaryExpression
+    | expression op=(INC|DEC)                         # PrimaryExpression
+    | op=(PLUS|MINUS|INC|DEC) expression              # UnaryExpression
     | EXCLAMATION expression                          # BooleanNotExpression
     | POW LPAREN expression COMMA expression RPAREN   # ExpoExpression
     | expression op=(STAR|DIV|MOD) expression         # MultiplicativeExpression
