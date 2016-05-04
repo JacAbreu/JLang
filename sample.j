@@ -1,18 +1,27 @@
 <% 
-if (a) { 
+if (a<10) { 
 %>
-a is true
-<% 
-}  
-else 
-{
-    a_is_false = true;
-}
 
-for (int i = 0; i < 10; i++)
-{
+a < 10
+
+<% 
+} else if (a < 20) {
 %>
-a is false
+
+a < 20
+
+<% 
+} else if (a < 30) {
+%>
+
+a < 30
+
+<% 
+} else {
+%>
+
+a is big
+
 <%    
 }
 %>

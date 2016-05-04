@@ -48,8 +48,8 @@ fragmented_script_start_if
     ;
 
 fragmented_script_middle_else
-    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' 'else' '{' (statement_list ';')? CLOSE_SCRIPT_BLOCK
-    | OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (ELSE if_body) fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' ELSE '{' (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    | OPEN_SCRIPT_BLOCK (statement_list ';')? '}' ELSE if_body fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK
     ;
 
 fragmented_script_middle
@@ -58,6 +58,11 @@ fragmented_script_middle
 
 fragmented_script_end_else
     : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (ELSE if_body)? (statement_list)? CLOSE_SCRIPT_BLOCK
+    | OPEN_SCRIPT_BLOCK (statement_list ';')? '}' ELSE  fragmented_statement_if (statement_list ';')? CLOSE_SCRIPT_BLOCK elements 
+      ( (fragmented_script_middle elements)+
+        | (fragmented_script_middle_else elements) 
+      )? 
+      (fragmented_script_end | fragmented_script_end_else)
     ;
 
 fragmented_script_end
