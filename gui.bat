@@ -1,0 +1,1 @@
+call grun JLang template -gui %1 
