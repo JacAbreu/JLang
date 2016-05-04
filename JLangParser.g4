@@ -13,6 +13,7 @@ elements
 element
     : echo_script
     | plain_script 
+    | fragmented_script_if
     | fragmented_script
     | RAW
     ;
@@ -26,7 +27,41 @@ plain_script
     ;
 
 fragmented_script
-    : OPEN_SCRIPT_BLOCK (statement_list ';')? fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK elements OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (statement_list)? CLOSE_SCRIPT_BLOCK
+    : fragmented_script_start elements (fragmented_script_middle elements)* fragmented_script_end
+    ;
+
+fragmented_script_if
+    : fragmented_script_start_if elements 
+      ( (fragmented_script_middle elements)+
+        | (fragmented_script_middle_else elements) 
+      )? 
+      (fragmented_script_end | fragmented_script_end_else)
+    ;
+
+
+fragmented_script_start
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script_start_if
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? fragmented_statement_if (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script_middle_else
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' 'else' '{' (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    | OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (ELSE if_body) fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script_middle
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (statement_list)? fragmented_statement (statement_list ';')? CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script_end_else
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (ELSE if_body)? (statement_list)? CLOSE_SCRIPT_BLOCK
+    ;
+
+fragmented_script_end
+    : OPEN_SCRIPT_BLOCK (statement_list ';')? '}' (statement_list)? CLOSE_SCRIPT_BLOCK
     ;
         
 
@@ -109,9 +144,12 @@ simple_embedded_statement
     | CONTINUE
     ;
 
-fragmented_statement
+fragmented_statement_if
     : IF LPAREN expression RPAREN OPEN_BRACE
-    | WHILE LPAREN expression RPAREN OPEN_BRACE
+    ;
+
+fragmented_statement
+    : WHILE LPAREN expression RPAREN OPEN_BRACE
     | FOR LPAREN for_initializer? ';' expression? ';' for_iterator? RPAREN OPEN_BRACE
     | FOREACH LPAREN type IDENTIFIER IN expression RPAREN OPEN_BRACE
     ;
@@ -148,7 +186,6 @@ expression
     | IDENTIFIER                                      # IdentifierExpression
     | '(' expression ')'                              # ParensExpression
     ;
-
 
 if_body
     : block_statement

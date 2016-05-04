@@ -1,8 +1,18 @@
-<%
+<% 
+if (a) { 
+%>
+a is true
+<% 
+}  
+else 
+{
+    a_is_false = true;
+}
+
 for (int i = 0; i < 10; i++)
 {
 %>
-<? i ?> é <% if (i%2==0) { %> par <% } else { %> impar <% } %>
-<%
+a is false
+<%    
 }
 %>

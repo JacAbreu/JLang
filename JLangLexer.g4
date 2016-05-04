@@ -10,9 +10,6 @@ RAW_CHAR
     | '<' ~[?%]
     ;
 
-//NL 
-//    : '\r'? '\n'
-//    ;
 
 OPEN_ECHOSCRIPT_BLOCK
     : '<?' -> pushMode(SCRIPT)
@@ -160,7 +157,6 @@ RPAREN:                   ')';
 TRUE:                     'true';
 FALSE:                    'false';
 
-// ------------------------------------------------------------------
       
 WS
     : [ \r\n\t]+ -> skip
