@@ -104,32 +104,32 @@ type
 
 simple_type
     : numeric_type 
-    | BOOL 
+    | TYPE_BOOL 
     ;
 
 numeric_type 
     : integral_type
     | floating_point_type
-    | DECIMAL
+    | TYPE_DECIMAL
     ;
 
 integral_type 
-    : BYTE
-    | SHORT
-    | INT
-    | LONG
-    | CHAR
+    : TYPE_BYTE
+    | TYPE_SHORT
+    | TYPE_INT
+    | TYPE_LONG
+    | TYPE_CHAR
     ;
 
 floating_point_type 
-    : FLOAT
-    | DOUBLE
+    : TYPE_FLOAT
+    | TYPE_DOUBLE
     ;
 
 class_type 
     : namespace_or_type_name
-    | OBJECT
-    | STRING
+    | TYPE_OBJECT
+    | TYPE_STRING
     ;
               
 namespace_or_type_name 
@@ -168,9 +168,11 @@ for_iterator
     : expression (','  expression)*
     ;
 
+
+
 expression
     : assign                                          # AssignExpression
-    | expression op=(INC|DEC)                         # PrimaryExpression
+    | primary_expression                              # PrimaryExpression
     | op=(PLUS|MINUS|INC|DEC) expression              # UnaryExpression
     | EXCLAMATION expression                          # BooleanNotExpression
     | POW LPAREN expression COMMA expression RPAREN   # ExpoExpression
@@ -185,12 +187,51 @@ expression
     | expression CONDITIONAL_AND expression           # ConditionalAndExpression
     | expression CONDITIONAL_OR expression            # ConditionalOrExpression
     | expression '?' expression ':' expression        # TernaryExpression
-    | INTEGER_LITERAL                                 # IntegerExpression
-    | REAL_LITERAL                                    # DoubleExpression
-    | boolean_literal                                 # BooleanExpression
-    | IDENTIFIER                                      # IdentifierExpression
     | '(' expression ')'                              # ParensExpression
     ;
+
+primary_expression
+    : literal bracket_expression*
+      ((member_access | method_invocation | INC | DEC) bracket_expression*)*
+    ;
+
+literal
+    : INTEGER_LITERAL                                 # IntegerExpression
+    | REAL_LITERAL                                    # DoubleExpression
+    | boolean_literal                                 # BooleanExpression
+    | STRING                                          # StringExpression
+    | IDENTIFIER                                      # IdentifierExpression
+    ;
+
+method_invocation
+    : LPAREN argument_list? RPAREN
+    ;
+
+argument_list 
+    : argument ( ',' argument)*
+    ;
+
+argument
+    : expression
+    ;
+
+bracket_expression
+    : '?'? '[' indexer_argument ( ',' indexer_argument)* ']'
+    ;
+
+indexer_argument
+    : (IDENTIFIER ':')? expression
+    ;
+        
+member_access
+    : '?'? '.' IDENTIFIER type_argument_list?
+    ;
+
+type_argument_list 
+    : '<' type ( ',' type)* '>'
+    ;
+
+
 
 if_body
     : block_statement

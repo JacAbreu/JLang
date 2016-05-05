@@ -53,17 +53,17 @@ BREAK:  'break';
 CONTINUE:'continue';
 
 // ------------------------------------------------------------------
-BOOL: 'bool';
-DECIMAL: 'decimal';
-BYTE: 'byte';
-SHORT: 'short';
-INT: 'int';
-LONG: 'long';
-CHAR: 'char';
-FLOAT: 'float';
-DOUBLE: 'double';
-OBJECT: 'object';
-STRING: 'string';
+TYPE_BOOL: 'bool';
+TYPE_DECIMAL: 'decimal';
+TYPE_BYTE: 'byte';
+TYPE_SHORT: 'short';
+TYPE_INT: 'int';
+TYPE_LONG: 'long';
+TYPE_CHAR: 'char';
+TYPE_FLOAT: 'float';
+TYPE_DOUBLE: 'double';
+TYPE_OBJECT: 'object';
+TYPE_STRING: 'string';
 
 // ------------------------------------------------------------------
 IDENTIFIER
@@ -154,10 +154,41 @@ DOT:                      '.';
 LPAREN:                   '(';
 RPAREN:                   ')';
 
+LBRACKET:                 '[';
+RBRACKET:                 ']';
+
 TRUE:                     'true';
 FALSE:                    'false';
 
-      
+STRING:           '"'  (~["\\\r\n\u0085\u2028\u2029] | CommonCharacter)* '"';
+
+fragment CommonCharacter
+	: SimpleEscapeSequence
+	| HexEscapeSequence
+	;
+
+fragment SimpleEscapeSequence
+	: '\\\''
+	| '\\"'
+	| '\\\\'
+	| '\\0'
+	| '\\a'
+	| '\\b'
+	| '\\f'
+	| '\\n'
+	| '\\r'
+	| '\\t'
+	| '\\v'
+	;
+fragment HexEscapeSequence
+	: '\\x' HexDigit
+	| '\\x' HexDigit HexDigit
+	| '\\x' HexDigit HexDigit HexDigit
+	| '\\x' HexDigit HexDigit HexDigit HexDigit
+	;
+
+fragment HexDigit : [0-9] | [A-F] | [a-f];      
+
 WS
     : [ \r\n\t]+ -> skip
     ;

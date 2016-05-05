@@ -1,1 +1,1 @@
-(template (elements (element just plain content)) <EOF>)
+(template (elements (element (plain_script <% (statement_list (statement (local_variable_declaration (type (class_type (namespace_or_type_name var))) (local_variable_declarator a = (expression (primary_expression (literal "uma string"))))))) %>))) <EOF>)
